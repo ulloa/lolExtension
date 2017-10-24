@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "TwitchExtension", "TwitchExtension.njsproj", "{46ED1A1C-5C74-490A-B2F4-59552DBB012C}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "frontend(1)", "extensions-samples-master\boilerplate\frontend\", "{491D5ED5-A252-48C1-BAAD-E91A1209A648}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "frontend", "extensions-samples-master\boilerplate\frontend\", "{491D5ED5-A252-48C1-BAAD-E91A1209A648}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_49881"
