@@ -1,0 +1,44 @@
+body {
+    font: 12px arial, sans-serif;
+    min-height: 100%;
+}
+
+div {
+    margin: 0px;
+}
+
+.menuButtonContainer {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -25px;
+}
+
+    .menuButtonContainer img {
+        height: 50px;
+    }
+
+.menuContainer {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60%;
+    height: 80%;
+    margin: -20% 0 0 -25%;
+    border: 2px solid black;
+}
+
+    .menuContainer table {
+        margin: auto;
+        width: 90%;
+        height: 90%;
+    }
+
+table thead tr:first-child {
+    text-align: center;
+}
+
+table img {
+    height: 50px;
+}

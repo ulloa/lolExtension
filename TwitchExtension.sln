@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "TwitchExtension", "TwitchExtension.njsproj", "{46ED1A1C-5C74-490A-B2F4-59552DBB012C}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "frontend(1)", "extensions-samples-master\boilerplate\frontend\", "{491D5ED5-A252-48C1-BAAD-E91A1209A648}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_49881"
+		Debug.AspNetCompiler.PhysicalPath = "extensions-samples-master\boilerplate\frontend\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49881\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_49881"
+		Release.AspNetCompiler.PhysicalPath = "extensions-samples-master\boilerplate\frontend\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49881\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "49881"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46ED1A1C-5C74-490A-B2F4-59552DBB012C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46ED1A1C-5C74-490A-B2F4-59552DBB012C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46ED1A1C-5C74-490A-B2F4-59552DBB012C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46ED1A1C-5C74-490A-B2F4-59552DBB012C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{491D5ED5-A252-48C1-BAAD-E91A1209A648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{491D5ED5-A252-48C1-BAAD-E91A1209A648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{491D5ED5-A252-48C1-BAAD-E91A1209A648}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{491D5ED5-A252-48C1-BAAD-E91A1209A648}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {799490B2-A3C2-4578-B294-70DC35B90167}
+	EndGlobalSection
+EndGlobal

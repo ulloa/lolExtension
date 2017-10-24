@@ -1,0 +1,3 @@
+I:\SkyDrive\LolTwitchExtension\obj\Debug\TwitchExtension.njsprojResolveAssemblyReference.cache
+I:\SkyDrive\LolTwitchExtension\obj\Debug\TwitchExtension.njsproj.CoreCompileInputs.cache
+I:\SkyDrive\LolTwitchExtension\bin\Microsoft.NodejsTools.WebRole.dll
