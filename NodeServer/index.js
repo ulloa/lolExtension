@@ -1,4 +1,3 @@
-
 const _request = require("request");
 const express = require('express');
 const cors = require('cors')
@@ -7,7 +6,7 @@ app.use(cors());
 const morgan = require('morgan');
 const path = require('path');
 const locale = "?locale=en_US";
-const key = "&api_key=RGAPI-6755e567-3412-49e9-a287-981961935123";
+const key = "&api_key=RGAPI-e0542456-35b8-4953-98e1-610e8ba2bb4a";
 const tagKey = "&tags=keys&dataById=false";
 const riotUrl = ".api.riotgames.com";
 const hostname = 'localhost';
@@ -27,7 +26,7 @@ app.listen(port, hostname, () => {
 app.get("/SetUser", (req, res) => {
     var summonerId;
     console.log(req.query);
-    _request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${req.query.Summonername + locale + key}`, { json: true }, (err, response, body) => {
+    request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${req.query.Summonername + locale + key}`, { json: true }, (err, response, body) => {
         console.log(body.id);
         summonerId = body.id;
     });
@@ -41,32 +40,44 @@ app.get("/SetUser", (req, res) => {
 app.get("/Test", (req, res) => {
     var userInfo;
 
-    _request(`https://na1${riotUrl}/lol/spectator/v3/featured-games${locale + key}`, { json: true }, (err, response, body) => {
-        _request(`https://na1${riotUrl}/lol/summoner/v3/summoners/by-name/${body.gameList[0].participants[0].summonerName + locale + key}`, { json: true }, (err, response, body) => {
-            userInfo = new UserInfo("na1", body.id);
+    try {
+        _request(`https://na1${riotUrl}/lol/spectator/v3/featured-games${locale + key}`, { json: true }, (err, response, body) => {
+            _request(`https://na1${riotUrl}/lol/summoner/v3/summoners/by-name/${body.gameList[0].participants[0].summonerName + locale + key}`, { json: true }, (err, response, body) => {
+                userInfo = new UserInfo("na1", body.id);
 
-            _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
-                var matchData = body;
-                loadMatchData(matchData, userInfo, res)
+                _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
+                    var matchData = body;
+                    loadMatchData(matchData, userInfo, res);
+                });
             });
         });
-    });
+    }
+    catch (err) {
+        console.log(err);
+        res.send("An Error Has Occured");
+    }
 });
 
 app.get("/RetrieveGameData", (req, res) => {
     var matchData;
     var userInfo;
 
-    //TODO: replace with Db.Retrieve
-    //userInfo = Db.Retrieve(req.params.TwitchId);
-    _request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${req.query.Summonername + locale + key}`, { json: true }, (err, response, body) => {
-        userInfo = new UserInfo(req.query.ServerLocation, body.id);
+    try {
+        //TODO: replace with Db.Retrieve
+        //userInfo = Db.Retrieve(req.params.TwitchId);
+        _request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${req.query.Summonername + locale + key}`, { json: true }, (err, response, body) => {
+            userInfo = new UserInfo(req.query.ServerLocation, body.id);
 
-        _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
-            matchData = body;
-            loadMatchData(matchData, userInfo, res)
+            _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
+                matchData = body;
+                loadMatchData(matchData, userInfo, res);
+            });
         });
-    });
+    }
+    catch (err) {
+        console.log(err);
+        res.send("An Error Has Occured");
+    }
 });
 
 var loadMatchData = function (matchData, userInfo, res) {

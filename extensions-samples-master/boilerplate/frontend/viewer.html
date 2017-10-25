@@ -24,31 +24,12 @@ or in the "license" file accompanying this file. This file is distributed on an 
 </head>
 <body>
     <div class="menuButtonContainer">
-        <button id="menuButton"><img src="https://image.flaticon.com/icons/svg/60/60758.svg" /></button>
+        <button id="menuButton"><img src="css/Arrow.png" /></button>
+        <button id="menuButtonCollapse" style="display:none;"><img src="css/Collapse.png" /></button>
     </div>
     <div class="menuContainer" id="menuContainer">
-        <table>
-            <thead>
-                <tr>
-                    <td colspan="8">Team 1</td>
-                    <td colspan="8">Team 2</td>
-                </tr>
-                <tr>
-                    <td colspan="2">Player</td>
-                    <td colspan="3">Champion</td>
-                    <td>Runes</td>
-                    <td>Masteries</td>
-                    <td></td>
-                    <td></td>
-                    <td colspan="2">Player</td>
-                    <td colspan="3">Champion</td>
-                    <td>Runes</td>
-                    <td>Masteries</td>                   
-                </tr>
-            </thead>
-            <tbody id="menuBody">
-            </tbody>
-        </table>
+        <div class="table" id="table1"></div>
+        <div class="table" id="table2"></div>
     </div>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <script src="js/jquery-3.2.1.min.js"></script>
