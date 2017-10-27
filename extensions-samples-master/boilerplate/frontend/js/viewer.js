@@ -34,9 +34,9 @@ $("#menuButtonCollapse").click(function () {
 $.ajax({
     url: "http://localhost:8000/Test"
 }).done(function (data) {
-    if (data != null) {
+    if (data !== null) {
         for (var i = 0; i < data.participants.length; i++) {
-            if (i % 2 == 0) {
+            if (i % 2 === 0) {
                 $("#table1").append($('<div class="row" id="' + i + 'player">'));
                 $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
                 $("#table1 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));

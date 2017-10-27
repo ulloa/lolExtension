@@ -8,21 +8,21 @@ EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "frontend", "extensions-samples-master\boilerplate\frontend\", "{491D5ED5-A252-48C1-BAAD-E91A1209A648}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_49881"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_8080"
 		Debug.AspNetCompiler.PhysicalPath = "extensions-samples-master\boilerplate\frontend\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49881\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_8080\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_49881"
+		Release.AspNetCompiler.VirtualPath = "/localhost_8080"
 		Release.AspNetCompiler.PhysicalPath = "extensions-samples-master\boilerplate\frontend\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49881\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_8080\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "49881"
+		VWDPort = "8080"
 	EndProjectSection
 EndProject
 Global

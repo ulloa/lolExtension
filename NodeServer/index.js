@@ -8,12 +8,17 @@ app.use(cors());
 const morgan = require('morgan');
 const path = require('path');
 const locale = "?locale=en_US";
-const key = "&api_key=RGAPI-32f8cf24-f780-4175-b09a-1d01d4580acb";
+const key = "&api_key=RGAPI-35aea5eb-0bc5-450d-ac4f-de30b060c3a4";
 const tagKey = "&tags=keys&dataById=false";
 const riotUrl = ".api.riotgames.com";
 const hostname = 'localhost';
 const port = 8000;
 const regions = ["BR1", "EUN1", "EUW1", "JP1", "KR", "LA1", "LA2", "NA1", "OC1", "TR1", "RU", "PBE1"];
+const spells = ["SummonerBoost", "SummonerExhaust", "SummonerExhaust", "SummonerFlash", "SummonerFlash", "SummonerHaste", "SummonerHeal", "SummonerHeal", "SummonerHeal", "SummonerHeal",
+    "SummonerSmite", "SummonerTeleport", "SummonerMana", "SummonerDot", "SummonerSmite", "SummonerTeleport", "SummonerMana", "SummonerDot",
+    "SummonerSmite", "SummonerTeleport", "Summonerbarrier", "SummonerTeleport", "Summonerbarrier", "SummonerTeleport", "Summonerbarrier", "SummonerTeleport",
+    "Summonerbarrier", "SummonerTeleport", "Summonerbarrier", "SummonerPoroRecall", "SummonerPoroThrow", "SummonerSnowball", "SummonerSiegeChampSelect1",
+    "SummonerSiegeChampSelect2", "SummonerDarkStarChampSelect1", "SummonerDarkStarChampSelect2"];
 
 app.use(morgan('dev'));
 
@@ -22,6 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+const lolVersion = "";
 
 function updateDB() {
     var options = {
@@ -34,7 +41,8 @@ function updateDB() {
     _request(`https://${regions[0] + riotUrl}/lol/static-data/v3/champions${locale + tagKey + key}`, { json: true }, (err, response, body) => {
         mongoClient.connect(dbUrl, options, function (err, db) {
             db.collection("champions").findOne({}, function (err, result) {
-                if (result == undefined || body.version != result.version) {
+                if (result === undefined || body.version !== result.version) {
+                    lolVersion = body.version;
                     updateChampions();
                     updateRunes();
                     updateMasteries();
@@ -72,7 +80,7 @@ async function updateChampions(db) {
 
                         console.log(`Updated champions for ${region}.`);
                         count++;
-                        if (count == regions.length) {
+                        if (count === regions.length) {
                             console.log(`Finshed champions update.`);
                             db.close();
                         }
@@ -83,12 +91,23 @@ async function updateChampions(db) {
     });
 }
 
-function getChampionById(db, id, region) {
-    db.collection("champions").find({ region: region }).toArray(function (err, result) {
+async function getChampionUrlById(id, region, url) {
+    await mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
+        var championId = id;
+        await db.collection("champions").find({ region: region }).toArray(function (err, result) {
+            if (err) {
+                throw err;
+            }
+                        
+            var resultObj = result[0];
+            db.close();
+            console.log("champion retrieved");
+            return url + resultObj.keys[championId] + ".png";
+        });
     });
 }
 
@@ -115,7 +134,7 @@ async function updateRunes(db) {
 
                         console.log(`Updated runes for ${region}.`);
                         count++;
-                        if (count == regions.length) {
+                        if (count === regions.length) {
                             console.log(`Finshed runes update.`);
                             db.close();
                         }
@@ -126,12 +145,20 @@ async function updateRunes(db) {
     });
 }
 
-function setRunes(db, participant, region) {
-    db.collection("runes").find({ region: region }).toArray(function (err, result) {
+async function setRunes(participant, region) {
+    await mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
+        await db.collection("runes").find({ region: region }).toArray(function (err, result) {
+            if (err) {
+                throw err;
+            }
+
+            db.close();
+            return result;
+        });
     });
 }
 
@@ -158,7 +185,7 @@ async function updateMasteries(db) {
 
                         console.log(`Updated masteries for ${region}.`);
                         count++;
-                        if (count == regions.length) {
+                        if (count === regions.length) {
                             console.log(`Finshed masteries update.`);
                             db.close();
                         }
@@ -169,11 +196,20 @@ async function updateMasteries(db) {
     });
 }
 
-function setMasteries(db, participant, region) {
-    db.collection("masteries").find({ region: region }).toArray(function (err, result) {
+async function setMasteries(participant, region) {
+    await mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
+
+        await db.collection("masteries").find({ region: region }).toArray(function (err, result) {
+            if (err) {
+                throw err;
+            }
+
+            db.close();
+            return result;
+        });
     });
 }
 
@@ -200,7 +236,7 @@ async function updateSummonerSpells(db) {
 
                         console.log(`Updated summonerspells for ${region}.`);
                         count++;
-                        if (count == regions.length) {
+                        if (count === regions.length) {
                             console.log(`Finshed summonerspells update.`);
                             db.close();
                         }
@@ -211,12 +247,25 @@ async function updateSummonerSpells(db) {
     });
 }
 
-function getSummonerSpellById(db, id, region) {
-    db.collection("summonerspells").find({ region: region, id: id }).toArray(function (err, result) {
+async function getSummonerSpellById(id, region, url) {
+    await mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
+        var spellId = parseInt(id);
+
+        await db.collection("summonerspells").find({ region: region }).toArray(function (err, result) {
+            if (err) {
+                throw err;
+            }
+                        
+            var resultObj = result[0].data[spells[spellId - 1]];
+            db.close();
+            console.log("champion retrieved");
+            resultObj["image"] = url + resultObj["key"] + ".png"
+            return resultObj;
+        });
     });
 }
 
@@ -241,9 +290,9 @@ app.get("/Test", (req, res) => {
     var userInfo;
 
     try {
-        _request(`https://na1${riotUrl}/lol/spectator/v3/featured-games${locale + key}`, { json: true }, (err, response, body) => {
-            _request(`https://na1${riotUrl}/lol/summoner/v3/summoners/by-name/${body.gameList[0].participants[0].summonerName + locale + key}`, { json: true }, (err, response, body) => {
-                userInfo = new UserInfo("na1", body.id);
+        _request(`https://${regions[7] + riotUrl}/lol/spectator/v3/featured-games${locale + key}`, { json: true }, (err, response, body) => {
+            _request(`https://${regions[7] + riotUrl}/lol/summoner/v3/summoners/by-name/${body.gameList[0].participants[0].summonerName + locale + key}`, { json: true }, (err, response, body) => {
+                userInfo = new UserInfo(regions[7], body.id);
 
                 _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
                     var matchData = body;
@@ -280,28 +329,17 @@ app.get("/RetrieveGameData", (req, res) => {
     }
 });
 
-var loadMatchData = function (matchData, userInfo, res) {
-    if (matchData != undefined && matchData.participants != undefined) {
-        mongoClient.connect(dbUrl, async function (err, db) {
-            if (err) {
-                throw err;
-            }
+var loadMatchData = function (matchData, userInfo, res, versionData) {
+    if (matchData !== undefined && matchData.participants !== undefined) {
+        matchData.participants.forEach(function (participant) {
+            participant["profileIconImage"] = `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/profileicon/${participant.profileIconId}.png`;
 
-            matchData.participants.forEach(function (participant) {
-                var champion = getChampionById(db, participant.championId, userInfo.ServerLocation);
-                //setMasteries(db, participant, userInfo.ServerLocation);
-                //setRunes(db, participant, userInfo.ServerLocation);
-                var spell1 = getSummonerSpellById(db, participant.spell1Id, userInfo.ServerLocation);
-                var spell2 = getSummonerSpellById(db, participant.spell2Id, userInfo.ServerLocation);
+            participant["championImage"] = getChampionUrlById(participant.championId, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/champion/`);
+            participant["spell1"] = getSummonerSpellById(participant.spell1Id, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/spell/`);
+            participant["spell2"] = getSummonerSpellById(participant.spell2Id, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/spell/`);
 
-                participant["profileIconImage"] = `http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${participant.profileIconId}.png`;
-                participant["championImage"] = `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}.png`;
-
-                participant["spell1Image"] = `http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${spell1}.png`;
-                participant["spell2Image"] = `http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${spell2}.png`;
-            });
-
-            db.close();
+            //setMasteries(db, participant, userInfo.ServerLocation);
+            //setRunes(db, participant, userInfo.ServerLocation);
         });
 
         console.log("got match data");
