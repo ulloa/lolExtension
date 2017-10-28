@@ -8,7 +8,7 @@ app.use(cors());
 const morgan = require('morgan');
 const path = require('path');
 const locale = "?locale=en_US";
-const key = "&api_key=RGAPI-35aea5eb-0bc5-450d-ac4f-de30b060c3a4";
+const key = "&api_key=RGAPI-c4d9ed2c-d360-462d-8ac9-027018933d86";
 const tagKey = "&tags=keys&dataById=false";
 const riotUrl = ".api.riotgames.com";
 const hostname = 'localhost';
@@ -16,10 +16,10 @@ const port = 8000;
 const regions = ["BR1", "EUN1", "EUW1", "JP1", "KR", "LA1", "LA2", "NA1", "OC1", "TR1", "RU", "PBE1"];
 const spells = ["SummonerBoost", "SummonerExhaust", "SummonerExhaust", "SummonerFlash", "SummonerFlash", "SummonerHaste", "SummonerHeal", "SummonerHeal", "SummonerHeal", "SummonerHeal",
     "SummonerSmite", "SummonerTeleport", "SummonerMana", "SummonerDot", "SummonerSmite", "SummonerTeleport", "SummonerMana", "SummonerDot",
-    "SummonerSmite", "SummonerTeleport", "Summonerbarrier", "SummonerTeleport", "Summonerbarrier", "SummonerTeleport", "Summonerbarrier", "SummonerTeleport",
-    "Summonerbarrier", "SummonerTeleport", "Summonerbarrier", "SummonerPoroRecall", "SummonerPoroThrow", "SummonerSnowball", "SummonerSiegeChampSelect1",
+    "SummonerSmite", "SummonerTeleport", "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerTeleport",
+    "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerPoroRecall", "SummonerPoroThrow", "SummonerSnowball", "SummonerSiegeChampSelect1",
     "SummonerSiegeChampSelect2", "SummonerDarkStarChampSelect1", "SummonerDarkStarChampSelect2"];
-
+var version = { version: "" };
 app.use(morgan('dev'));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -27,8 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
-
-const lolVersion = "";
 
 function updateDB() {
     var options = {
@@ -39,25 +37,26 @@ function updateDB() {
     };
 
     _request(`https://${regions[0] + riotUrl}/lol/static-data/v3/champions${locale + tagKey + key}`, { json: true }, (err, response, body) => {
-        mongoClient.connect(dbUrl, options, function (err, db) {
-            db.collection("champions").findOne({}, function (err, result) {
-                if (result === undefined || body.version !== result.version) {
-                    lolVersion = body.version;
-                    updateChampions();
-                    updateRunes();
-                    updateMasteries();
-                    updateSummonerSpells();
-                }
+        if (err === null && body !== null) {
+            mongoClient.connect(dbUrl, options, function (err, db) {
+                db.collection("champions").findOne({}, function (err, result) {
+                    if (result === null || body.version !== result.version) {
+                        updateChampions();
+                        updateRunes();
+                        updateMasteries();
+                        updateSummonerSpells();
+                    }
 
-                db.close();
+                    db.close();
+                });
             });
-        });
+        }
     });
 }
 
 updateDB();
 
-async function updateChampions(db) {
+function updateChampions(db) {
     var champions;
     var count = 0;
     var options = {
@@ -91,27 +90,28 @@ async function updateChampions(db) {
     });
 }
 
-async function getChampionUrlById(id, region, url) {
-    await mongoClient.connect(dbUrl, async function (err, db) {
+function getChampionUrlById(participant, id, region, url, callback) {
+    mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
         var championId = id;
-        await db.collection("champions").find({ region: region }).toArray(function (err, result) {
+        db.collection("champions").find({ region: region }).toArray(function (err, result) {
             if (err) {
                 throw err;
             }
-                        
+
             var resultObj = result[0];
             db.close();
-            console.log("champion retrieved");
-            return url + resultObj.keys[championId] + ".png";
+
+            participant["championImage"] = url + resultObj.keys[championId] + ".png";
+            callback();
         });
     });
 }
 
-async function updateRunes(db) {
+function updateRunes(db) {
     var runes;
     var count = 0;
     var options = {
@@ -145,13 +145,13 @@ async function updateRunes(db) {
     });
 }
 
-async function setRunes(participant, region) {
-    await mongoClient.connect(dbUrl, async function (err, db) {
+function setRunes(participant, region) {
+    mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
-        await db.collection("runes").find({ region: region }).toArray(function (err, result) {
+        db.collection("runes").find({ region: region }).toArray(function (err, result) {
             if (err) {
                 throw err;
             }
@@ -162,7 +162,7 @@ async function setRunes(participant, region) {
     });
 }
 
-async function updateMasteries(db) {
+function updateMasteries(db) {
     var masteries;
     var count = 0;
     var options = {
@@ -196,13 +196,13 @@ async function updateMasteries(db) {
     });
 }
 
-async function setMasteries(participant, region) {
-    await mongoClient.connect(dbUrl, async function (err, db) {
+function setMasteries(participant, region) {
+    mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
-        await db.collection("masteries").find({ region: region }).toArray(function (err, result) {
+        db.collection("masteries").find({ region: region }).toArray(function (err, result) {
             if (err) {
                 throw err;
             }
@@ -213,7 +213,7 @@ async function setMasteries(participant, region) {
     });
 }
 
-async function updateSummonerSpells(db) {
+function updateSummonerSpells(db) {
     var summonerspells;
     var count = 0;
     var options = {
@@ -247,24 +247,30 @@ async function updateSummonerSpells(db) {
     });
 }
 
-async function getSummonerSpellById(id, region, url) {
-    await mongoClient.connect(dbUrl, async function (err, db) {
+function getSummonerSpellById(participant, id1, id2, region, url, callback) {
+    mongoClient.connect(dbUrl, async function (err, db) {
         if (err) {
             throw err;
         }
 
-        var spellId = parseInt(id);
+        var spellId1 = parseInt(id1);
+        var spellId2 = parseInt(id2);
 
-        await db.collection("summonerspells").find({ region: region }).toArray(function (err, result) {
+        db.collection("summonerspells").find({ region: region }).toArray(function (err, result) {
             if (err) {
                 throw err;
             }
-                        
-            var resultObj = result[0].data[spells[spellId - 1]];
+
+            var resultObj1 = result[0].data[spells[spellId1 - 1]];
+            var resultObj2 = result[0].data[spells[spellId2 - 1]];
             db.close();
-            console.log("champion retrieved");
-            resultObj["image"] = url + resultObj["key"] + ".png"
-            return resultObj;
+
+            resultObj1["image"] = url + resultObj1["key"] + ".png";
+            participant[`spell1`] = resultObj1;
+
+            resultObj2["image"] = url + resultObj2["key"] + ".png";
+            participant[`spell2`] = resultObj2;
+            callback();
         });
     });
 }
@@ -329,21 +335,38 @@ app.get("/RetrieveGameData", (req, res) => {
     }
 });
 
-var loadMatchData = function (matchData, userInfo, res, versionData) {
+function loadMatchData (matchData, userInfo, res) {
     if (matchData !== undefined && matchData.participants !== undefined) {
-        matchData.participants.forEach(function (participant) {
-            participant["profileIconImage"] = `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/profileicon/${participant.profileIconId}.png`;
-
-            participant["championImage"] = getChampionUrlById(participant.championId, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/champion/`);
-            participant["spell1"] = getSummonerSpellById(participant.spell1Id, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/spell/`);
-            participant["spell2"] = getSummonerSpellById(participant.spell2Id, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${lolVersion}/img/spell/`);
-
-            //setMasteries(db, participant, userInfo.ServerLocation);
-            //setRunes(db, participant, userInfo.ServerLocation);
+        mongoClient.connect(dbUrl, function (err, db) {
+            db.collection("champions").findOne({}, function (err, result) {
+                updateParticipant(matchData, 0, userInfo, res, result.version);
+            });
         });
+    }
+}
 
+function updateParticipant(matchData, counter, userInfo, res, version) {
+    if (counter === matchData.participants.length) {
         console.log("got match data");
         res.send(matchData);
+    }
+    else {
+        matchData.participants[counter]["profileIconImage"] = `http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${matchData.participants[counter].profileIconId}.png`;
+
+        try {
+            getChampionUrlById(matchData.participants[counter], matchData.participants[counter].championId, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/`, function () {
+                getSummonerSpellById(matchData.participants[counter], matchData.participants[counter].spell1Id, matchData.participants[counter].spell2Id, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/`, function () {
+                    counter++;
+                    updateParticipant(matchData, counter, userInfo, res, version);
+                });
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
+
+        //setMasteries(db, matchData.participants[counter], userInfo.ServerLocation);
+        //setRunes(db, matchData.participants[counter], userInfo.ServerLocation);
     }
 }
 

@@ -41,20 +41,20 @@ $.ajax({
                 $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
                 $("#table1 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));
                 $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].championImage + '"/></div>'));
-                $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1Image + '"/></div>'));
-                $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2Image + '"/></div>'));
-                $("#table1 .row:last").append($('<div class="cell"><button><img src="' + data.participants[i].masteryImage + '"/></button></div>'));
-                $("#table1 .row:last").append($('<div class="cell"><button><img src="css/Rune.png"/></button></div>'));
+                $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1.image + '"/></div>'));
+                $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2.image + '"/></div>'));
+                $("#table1 .row:last").append($('<div class="cell"><button><img alt="masteries" src="' + data.participants[i].masteryImage + '"/></button></div>'));
+                $("#table1 .row:last").append($('<div class="cell"><button><img alt="runes" src="css/Rune.png"/></button></div>'));
             }
             else {
                 $("#table2").append($('<div class="row" id="' + i + 'player">'));
                 $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
                 $("#table2 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));
                 $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].championImage + '"/></div>'));
-                $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1Image + '"/></div>'));
-                $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2Image + '"/></div>'));
-                $("#table2 .row:last").append($('<div class="cell"><button><img src="' + data.participants[i].masteryImage + '"/></button></div>'));
-                $("#table2 .row:last").append($('<div class="cell"><button><img src="css/Rune.png"/></button></div>'));
+                $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1.image + '"/></div>'));
+                $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2.image + '"/></div>'));
+                $("#table2 .row:last").append($('<div class="cell"><button><img alt="masteries" src="' + data.participants[i].masteryImage + '"/></button></div>'));
+                $("#table2 .row:last").append($('<div class="cell"><button><img alt="runes" src="css/Rune.png"/></button></div>'));
             }
         }
     }
