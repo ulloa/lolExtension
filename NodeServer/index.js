@@ -20,7 +20,7 @@ const spells = ["SummonerBoost", "SummonerExhaust", "SummonerExhaust", "Summoner
     "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerPoroRecall", "SummonerPoroThrow", "SummonerSnowball", "SummonerSiegeChampSelect1",
     "SummonerSiegeChampSelect2", "SummonerDarkStarChampSelect1", "SummonerDarkStarChampSelect2"];
 
-app.use(cors({ origin: `http://localhost:${port}` }));
+app.use(cors({ origin: "*" }));
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
