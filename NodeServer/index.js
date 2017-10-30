@@ -12,16 +12,16 @@ const key = "&api_key=RGAPI-c4d9ed2c-d360-462d-8ac9-027018933d86";
 const tagKey = "&tags=keys&dataById=false";
 const riotUrl = ".api.riotgames.com";
 const hostname = 'localhost';
-const port = 8000;
+const port = process.env.PORT || 8000;
 const regions = ["BR1", "EUN1", "EUW1", "JP1", "KR", "LA1", "LA2", "NA1", "OC1", "TR1", "RU", "PBE1"];
 const spells = ["SummonerBoost", "SummonerExhaust", "SummonerExhaust", "SummonerFlash", "SummonerFlash", "SummonerHaste", "SummonerHeal", "SummonerHeal", "SummonerHeal", "SummonerHeal",
     "SummonerSmite", "SummonerTeleport", "SummonerMana", "SummonerDot", "SummonerSmite", "SummonerTeleport", "SummonerMana", "SummonerDot",
     "SummonerSmite", "SummonerTeleport", "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerTeleport",
     "SummonerBarrier", "SummonerTeleport", "SummonerBarrier", "SummonerPoroRecall", "SummonerPoroThrow", "SummonerSnowball", "SummonerSiegeChampSelect1",
     "SummonerSiegeChampSelect2", "SummonerDarkStarChampSelect1", "SummonerDarkStarChampSelect2"];
-var version = { version: "" };
-app.use(morgan('dev'));
 
+app.use(cors({ origin: `http://localhost:${port}` }));
+app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(port, hostname, () => {
@@ -91,7 +91,7 @@ function updateChampions(db) {
 }
 
 function getChampionUrlById(participant, id, region, url, callback) {
-    mongoClient.connect(dbUrl, async function (err, db) {
+    mongoClient.connect(dbUrl, function (err, db) {
         if (err) {
             throw err;
         }
@@ -146,7 +146,7 @@ function updateRunes(db) {
 }
 
 function setRunes(participant, region) {
-    mongoClient.connect(dbUrl, async function (err, db) {
+    mongoClient.connect(dbUrl, function (err, db) {
         if (err) {
             throw err;
         }
@@ -197,7 +197,7 @@ function updateMasteries(db) {
 }
 
 function setMasteries(participant, region) {
-    mongoClient.connect(dbUrl, async function (err, db) {
+    mongoClient.connect(dbUrl, function (err, db) {
         if (err) {
             throw err;
         }
@@ -248,7 +248,7 @@ function updateSummonerSpells(db) {
 }
 
 function getSummonerSpellById(participant, id1, id2, region, url, callback) {
-    mongoClient.connect(dbUrl, async function (err, db) {
+    mongoClient.connect(dbUrl, function (err, db) {
         if (err) {
             throw err;
         }
@@ -335,7 +335,7 @@ app.get("/RetrieveGameData", (req, res) => {
     }
 });
 
-function loadMatchData (matchData, userInfo, res) {
+function loadMatchData(matchData, userInfo, res) {
     if (matchData !== undefined && matchData.participants !== undefined) {
         mongoClient.connect(dbUrl, function (err, db) {
             db.collection("champions").findOne({}, function (err, result) {

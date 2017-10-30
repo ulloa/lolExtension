@@ -1,7 +1,55 @@
 body {
-	font: 12px arial, sans-serif;
+    font: 12px arial, sans-serif;
+    min-height: 100%;
 }
 
 div {
-	margin: 0px;
+    margin: 0;
 }
+
+.menuButtonContainer {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -25px;
+}
+
+    .menuButtonContainer img {
+        height: 50px;
+    }
+
+.menuContainer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 200px;
+    margin: -110px 0 0 -250px;
+    background: url("BackgroundConfig.png");
+    background-size: 100% 100%;
+    color: #949790;
+}
+
+    .menuContainer .login {
+        margin: auto;
+        width: 100%;
+        padding-top: 10%;
+        padding-left: 33%;
+    }
+
+button {
+    background-color: #091212;
+    border: 3px solid #1c3f42;
+    display: inline-block;
+    cursor: pointer;
+    padding: 5px;
+    color: #949790;
+}
+
+    button:hover {
+        background-color: #1d3737;
+    }
+
+    button img {
+        height: 35px !important;
+    }
