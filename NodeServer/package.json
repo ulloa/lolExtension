@@ -9,7 +9,11 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
   "dependencies": {
+    "async": "^2.5.0",
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "mongodb": "^2.2.33",

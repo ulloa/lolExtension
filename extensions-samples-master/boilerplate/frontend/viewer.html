@@ -9,6 +9,23 @@
     <link rel="stylesheet" href="css/viewer.css">
 </head>
 <body>
+    <div id="masteryContainer">
+        <button class="closeButton" onclick="closeMasteryContainer()">X</button>
+        <div id="masteryButton" onclick="enableMastery()">Masteries</div>
+        <div id="runeButton" onclick="enableRunes()">Runes</div>
+        <div id="runesTab"></div>
+        <div id="masteryTab"></div>
+    </div>
+    <div id="masteryTemplate">
+        <image class="image"></image>
+        <div class="description"></div>
+        <div class="amount"></div>
+    </div>
+    <div id="runeTemplate">
+        <image class="image"></image>
+        <div class="description"></div>
+        <div class="amount"></div>
+    </div>
     <div class="menuButtonContainer">
         <button id="menuButton"><img src="css/Arrow.png" /></button>
         <button id="menuButtonCollapse" style="display:none;"><img src="css/Collapse.png" /></button>
