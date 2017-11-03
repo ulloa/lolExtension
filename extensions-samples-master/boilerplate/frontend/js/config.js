@@ -3,15 +3,17 @@ var twitchJwt;
 if (window.Twitch.ext) {
     window.Twitch.ext.onAuthorized(function (auth) {
         twitchJwt = auth.token;
+        $("#userSubmit").prop('disabled', false);
     });
 }
 
 $("#userSubmit").click(function () {
     if (twitchJwt) {
         var parm = "$SummonerName=" + $("#summonerName").val() + "&ServerLocation=" + $("#serverLocation").val();
-        //"http://localhost:8000/Test"
+        //"http://localhost:8000/SetUser"
+        //"https://leaguetwitch.herokuapp.com/SetUser"
         $.ajax({
-            url: "https://leaguetwitch.herokuapp.com/Test" + parm,
+            url: "https://leaguetwitch.herokuapp.com/SetUser" + parm,
             headers: {
                 'loltwitchextension-jwt': twitchJwt
             }
