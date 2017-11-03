@@ -7,9 +7,12 @@ const app = express();
 app.use(cors());
 const morgan = require('morgan');
 const path = require('path');
-const async = require('async');
+const _async = require('async');
+const jwt = require("jsonwebtoken");
+
+const twitchSecret = process.env.twitchAPISecret || "temporarysecret";
 const locale = "?locale=en_US";
-const key = process.env.riotApiKey || "&api_key=RGAPI-e28ea5eb-fd87-450b-8db5-ad6769e4d34f";
+const key = process.env.riotApiKey || "&api_key=RGAPI-ed031133-315e-4600-a5b8-aa67e7398b35";
 const tagKey = "&tags=keys&dataById=false";
 const tagImage = "&tags=image";
 const riotUrl = ".api.riotgames.com";
@@ -40,10 +43,10 @@ function updateDB() {
     };
 
     _request(`https://${regions[0] + riotUrl}/lol/static-data/v3/champions${locale + tagKey + key}`, { json: true }, (err, response, body) => {
-        if (err === null && body !== null) {
+        if (!err && body) {
             mongoClient.connect(dbUrl, options, function (err, db) {
                 db.collection("champions").findOne({}, function (err, result) {
-                    if (result === null || body.version !== result.version) {
+                    if (!result || body.version !== result.version) {
                         updateChampions();
                         updateRunes();
                         updateMasteries();
@@ -293,67 +296,126 @@ async function getSummonerSpellById(participant, id1, id2, region, url, callback
     });
 }
 
-//req.params.TwitchId
+//JWT Example
+//{
+//    "exp": 1484242525,
+//        "opaque_user_id": "UG12X345T6J78",
+//            "channel_id": "test_channel",
+//                "role": "broadcaster",
+//                    "pubsub_perms": {
+//        listen: ["broadcast", "whisper-UG12X345T6J78"],
+//            send: ["*"]
+//    }
+//}
 //req.params.ServerLocation
 //req.params.SummonerName
 app.get("/SetUser", (req, res) => {
-    var summonerId;
-    console.log(req.query);
-    request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${req.query.Summonername + locale + key}`, { json: true }, (err, response, body) => {
-        console.log(body.id);
-        summonerId = body.id;
+
+    var tokenString = req.get("loltwitchextension-jwt");
+    var serverLocation = req.params.ServerLocation;
+    var summonerName = req.params.SummonerName;
+    var twitchId;
+
+    jwt.verify(tokenString, twitchSecret, function (err, token) {
+        if (err || token.role !== "broadcaster") {
+            res.send("Error");
+        }
+        else {
+            twitchId = token.channel_id;
+
+            request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${summonerName + locale + key}`, { json: true }, (err, response, body) => {
+                var userInfo = new UserInfo(serverLocation, body.id, twitchId);
+
+                mongoClient.connect(dbUrl, function (err, db) {
+                    db.collection("users").findOne({ TwitchId: userInfo.TwitchId }, function (err, result) {
+                        //Update User
+                        if (result) {
+                            db.collection("users").updateOne({ TwitchId: userInfo.TwitchId }, userInfo, function (err, res) {
+                                if (err) {
+                                    res.send("Error");
+                                }
+                                else {
+                                    res.setHeader("Authorization", jwt.sign(token, twitchSecret));
+                                    res.send("Success");
+                                }
+                            });
+                        }
+                        //Create User
+                        else {
+                            db.collection("users").insertOne(userInfo, function (err, result) {
+                                if (err) {
+                                    res.send("Error");
+                                }
+                                else {
+                                    req.headers["Authorization"] = jwt.sign(token, twitchSecret);
+                                    res.send("Success");
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        }
     });
-
-    //TODO Store data in database
-    //Db.Store(req.params.TwitchId, req.params.ServerLocation, summonerId);
-
-    res.send("Success");
 });
 
 app.get("/Test", (req, res) => {
     var userInfo;
+    var matchData;
+    var summonerName;
     console.log(`Test function is executing`);
 
-    try {
-        _request(`https://${regions[7] + riotUrl}/lol/spectator/v3/featured-games${locale + key}`, { json: true }, (err, response, body) => {
-            _request(`https://${regions[7] + riotUrl}/lol/summoner/v3/summoners/by-name/${body.gameList[0].participants[0].summonerName + locale + key}`, { json: true }, (err, response, body) => {
-                userInfo = new UserInfo(regions[7], body.id);
+    _request(`https://${regions[7] + riotUrl}/lol/spectator/v3/featured-games${locale + key}`, { json: true }, (err, response, body) => {
+        if (!body || err || !body.gameList) {
+            res.send("An Error Has Occured");
+        }
+        summonerName = encodeURI(body.gameList[0].participants[0].summonerName);
 
-                _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
-                    var matchData = body;
-                    loadMatchData(matchData, userInfo, res);
-                });
+        _request(`https://${regions[7] + riotUrl}/lol/summoner/v3/summoners/by-name/${summonerName + locale + key}`, { json: true }, (err, response, body) => {
+            if (!body || err || !body.id) {
+                res.send("An Error Has Occured");
+            }
+
+            userInfo = new UserInfo(regions[7], body.id);
+
+            _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
+                if (!body || err) {
+                    res.send("An Error Has Occured");
+                }
+
+                matchData = body;
+                loadMatchData(matchData, userInfo, res);
             });
         });
-    }
-    catch (err) {
-        console.log(err);
-        res.send("An Error Has Occured");
-    }
+    });
 });
 
 app.get("/RetrieveGameData", (req, res) => {
     var matchData;
     var userInfo;
+    var summonerName;
 
     console.log(`RetrieveGameData function is executing`);
 
-    try {
-        //TODO: replace with Db.Retrieve
-        //userInfo = Db.Retrieve(req.params.TwitchId);
-        _request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${req.query.Summonername + locale + key}`, { json: true }, (err, response, body) => {
-            userInfo = new UserInfo(req.query.ServerLocation, body.id);
+    //TODO: replace with Db.Retrieve
+    //userInfo = Db.Retrieve(req.params.TwitchId);
+    summonerName = encodeURI(req.query.Summonername);
+    _request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${summonerName + locale + key}`, { json: true }, (err, response, body) => {
+        if (!body || err || !body.id) {
+            res.send("An Error Has Occured");
+        }
 
-            _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
-                matchData = body;
-                loadMatchData(matchData, userInfo, res);
-            });
+        userInfo = new UserInfo(req.query.ServerLocation, body.id);
+
+        _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
+            if (!body || err) {
+                res.send("An Error Has Occured");
+            }
+
+            matchData = body;
+            loadMatchData(matchData, userInfo, res);
         });
-    }
-    catch (err) {
-        console.log(err);
-        res.send("An Error Has Occured");
-    }
+    });
 });
 
 function loadMatchData(matchData, userInfo, res) {
@@ -361,9 +423,9 @@ function loadMatchData(matchData, userInfo, res) {
         mongoClient.connect(dbUrl, function (err, db) {
             db.collection("champions").findOne({ region: userInfo.ServerLocation }, function (err, result) {
                 var version = result.version;
-                async.each(matchData.participants, function (participant, callback) {
+                _async.each(matchData.participants, function (participant, callback) {
                     participant["profileIconImage"] = `http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${participant.profileIconId}.png`;
-                    async.parallel([
+                    _async.parallel([
                         function (callback) {
                             getChampionUrlById(participant, participant.championId, userInfo.ServerLocation, `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/`, callback);
                         },
@@ -389,8 +451,9 @@ function loadMatchData(matchData, userInfo, res) {
 }
 
 class UserInfo {
-    constructor(ServerLocation, SummonerId) {
+    constructor(ServerLocation, SummonerId, TwitchId) {
         this.SummonerId = SummonerId;
         this.ServerLocation = ServerLocation;
+        this.TwitchId = TwitchId;
     }
 }

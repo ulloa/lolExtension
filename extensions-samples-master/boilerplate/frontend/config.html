@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/config.css">
 </head>
 <body>
@@ -13,11 +12,30 @@
             <label>League of Legends Summoner ID:</label>
             <br />
             <br />
-            <input type="text" />
+            <input id="summonerName" type="text" />
+            <br />
+            <br />
+            <label>Server Location:</label>
+            <br />
+            <br />
+            <select id="serverLocation">
+                <option></option>
+                <option>BR1</option>
+                <option>EUN1</option>
+                <option>EUW1</option>
+                <option>JP1</option>
+                <option>KR</option>
+                <option>LA1</option>
+                <option>LA2</option>
+                <option>NA1</option>
+                <option>OC1</option>
+                <option>TR1</option>
+                <option>RU</option>
+                <option>PBE1</option>
+            </select>
         </div>
     </div>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
-    <script src="js/common.js"></script>
     <script src="js/config.js"></script>
 </body>
 </html>
