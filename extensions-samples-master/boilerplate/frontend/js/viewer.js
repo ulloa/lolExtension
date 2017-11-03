@@ -48,7 +48,7 @@ function fillRunesAndMaster(id) {
     $("#runesTab").html("");
     $("#masteryTab").html("");
 
-    dataStore.participants[id].masteries.forEach(function (mastery) {
+    matchData.participants[id].masteries.forEach(function (mastery) {
         var masteryT = $("#masteryTemplate").clone();
         masteryT.find(".description").text("Description: " + mastery.masteryData.description);
         masteryT.find(".image").attr("src", mastery.masteryData.image.full);
@@ -57,7 +57,7 @@ function fillRunesAndMaster(id) {
         $("#masteryTab").append(masteryT);
     });
 
-    dataStore.participants[id].runes.forEach(function (rune) {
+    matchData.participants[id].runes.forEach(function (rune) {
         var runeT = $("#runeTemplate").clone();
         runeT.find(".description").text("Description: " + rune.runeData.description);
         runeT.find(".image").attr("src", rune.runeData.image.full);
@@ -87,9 +87,10 @@ var matchData;
 
 setInterval(function () {
     if (twitchJwt) {
-        //"http://localhost:8000/Test"
+        //"https://localhost:8000/Test"
+        //"https://leaguetwitch.herokuapp.com/Test"
         $.ajax({
-            url: "https://leaguetwitch.herokuapp.com/Test",
+            url: "https://79cc9a6f.ngrok.io/Test",
             headers: {
                 'loltwitchextension-jwt': twitchJwt
             }
@@ -101,6 +102,9 @@ setInterval(function () {
                 else {
                     $("#menuButton").show();
                 }
+
+                $("#table1").html("");
+                $("#table2").html("");
 
                 matchData = data;
                 for (var i = 0; i < data.participants.length; i++) {
@@ -135,4 +139,4 @@ setInterval(function () {
             }
         });
     }
-}, 3 * 60000);
+}, 3 * 6000);

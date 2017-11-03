@@ -9,11 +9,11 @@ if (window.Twitch.ext) {
 
 $("#userSubmit").click(function () {
     if (twitchJwt) {
-        var parm = "$SummonerName=" + $("#summonerName").val() + "&ServerLocation=" + $("#serverLocation").val();
+        var parm = "?SummonerName=" + $("#summonerName").val() + "&ServerLocation=" + $("#serverLocation").val();
         //"http://localhost:8000/SetUser"
         //"https://leaguetwitch.herokuapp.com/SetUser"
         $.ajax({
-            url: "https://leaguetwitch.herokuapp.com/SetUser" + parm,
+            url: "https://79cc9a6f.ngrok.io/SetUser" + parm,
             headers: {
                 'loltwitchextension-jwt': twitchJwt
             }

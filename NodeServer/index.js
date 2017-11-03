@@ -44,7 +44,7 @@ function updateDB() {
     };
 
     _request(`https://${regions[0] + riotUrl}/lol/static-data/v3/champions${locale + tagKey + key}`, { json: true }, (err, response, body) => {
-        if (!err && body !== undefined && body) {
+        if (!err && body !== undefined && body && body.version !== undefined) {
             mongoClient.connect(dbUrl, options, function (err, db) {
                 db.collection("champions").findOne({}, function (err, result) {
                     if (!result || body.version !== result.version) {
@@ -308,30 +308,30 @@ async function getSummonerSpellById(participant, id1, id2, region, url, callback
 //            send: ["*"]
 //    }
 //}
-//req.params.ServerLocation
-//req.params.SummonerName
+//req.query.ServerLocation
+//req.query.SummonerName
 app.get("/SetUser", (req, res) => {
     var tokenString = req.get("loltwitchextension-jwt");
-    var serverLocation = req.params.ServerLocation;
-    var summonerName = req.params.SummonerName;
+    var serverLocation = req.query.ServerLocation;
+    var summonerName = req.query.SummonerName;
     var twitchId;
 
-    jwt.verify(tokenString, twitchSecret, function (err, token) {
+    jwt.verify(tokenString, Buffer.from(twitchSecret, 'base64'), function (err, token) {
         if (err || token.role !== "broadcaster") {
             res.send("Error");
         }
         else {
             twitchId = token.channel_id;
 
-            request(`https://${req.query.ServerLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${summonerName + locale + key}`, { json: true }, (err, response, body) => {
+            _request(`https://${serverLocation + riotUrl}/lol/summoner/v3/summoners/by-name/${summonerName + locale + key}`, { json: true }, (err, response, body) => {
                 var userInfo = new UserInfo(serverLocation, body.id, twitchId);
 
                 mongoClient.connect(dbUrl, function (err, db) {
-                    db.collection("users").updateOne({ TwitchId: userInfo.TwitchId }, userInfo, { upsert: true }, function (err, res) {
+                    db.collection("users").updateOne({ TwitchId: userInfo.TwitchId }, userInfo, { upsert: true }, function (err, result) {
                         if (err) {
                             res.send("Error");
                         }
-                        else {
+                        else {                            
                             res.setHeader("Authorization", jwt.sign(token, twitchSecret));
                             res.send("Success");
                         }
@@ -349,7 +349,7 @@ app.get("/Test", (req, res) => {
     var tokenString = req.get("loltwitchextension-jwt");
     console.log(`Test function is executing`);
 
-    jwt.verify(tokenString, twitchSecret, function (err, token) {
+    jwt.verify(tokenString, Buffer.from(twitchSecret, 'base64'), function (err, token) {
         if (err) {
             res.send("Error");
         }
@@ -407,7 +407,7 @@ app.get("/RetrieveGameData", (req, res) => {
     var tokenString = req.get("loltwitchextension-jwt");
     console.log(`RetrieveGameData function is executing`);
 
-    jwt.verify(tokenString, twitchSecret, function (err, token) {
+    jwt.verify(tokenString, Buffer.from(twitchSecret, 'base64'), function (err, token) {
         if (err) {
             res.send("Error");
         }
@@ -476,7 +476,7 @@ function loadMatchData(matchData, userInfo, res) {
                     });
 
                 }, function (err) {
-                    var userData;
+                    var userData = {};
                     userData.TwitchId = userInfo.TwitchId;
                     userData.NextUpdate = new Date(new Date().getTime() + updatePeriod * 60000);
                     userData.MatchData = matchData;
