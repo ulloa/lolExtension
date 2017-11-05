@@ -3,6 +3,7 @@ var twitchJwt;
 if (window.Twitch.ext) {
     window.Twitch.ext.onAuthorized(function (auth) {
         twitchJwt = auth.token;
+        updateUI();
     });
 }
 
@@ -87,56 +88,64 @@ var matchData;
 
 setInterval(function () {
     if (twitchJwt) {
-        //"https://localhost:8000/Test"
-        //"https://leaguetwitch.herokuapp.com/Test"
-        $.ajax({
-            url: "https://79cc9a6f.ngrok.io/Test",
-            headers: {
-                'loltwitchextension-jwt': twitchJwt
-            }
-        }).done(function (data) {
-            if (data !== null && data !== "Error") {
-                if ($("#menuContainer").is(":visible")) {
-                    $("#menuButtonCollapse").show();
-                }
-                else {
-                    $("#menuButton").show();
-                }
+        updateUI();
+    }
+}, 3 * 60000);
 
-                $("#table1").html("");
-                $("#table2").html("");
+function defaultImage(image) {
+    image.src = "css/Rune.png";
+}
 
-                matchData = data;
-                for (var i = 0; i < data.participants.length; i++) {
-                    if (i % 2 === 0) {
-                        $("#table1").append($('<div class="row" id="' + i + '">'));
-                        $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
-                        $("#table1 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));
-                        $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].championImage + '"/></div>'));
-                        $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1.image + '"/></div>'));
-                        $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2.image + '"/></div>'));
-                        $("#table1 .row:last").append($('<div class="cell"><button onclick="showMasteries(this)"><img tag="masteries" alt="masteries" src="' + data.participants[i].keyStone + '"/></button></div>'));
-                        $("#table1 .row:last").append($('<div class="cell"><button onclick="showRunes(this)"><img tag="runes" alt="runes" src="css/Rune.png"/></button></div>'));
-                    }
-                    else {
-                        $("#table2").append($('<div class="row" id="' + i + '">'));
-                        $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
-                        $("#table2 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));
-                        $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].championImage + '"/></div>'));
-                        $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1.image + '"/></div>'));
-                        $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2.image + '"/></div>'));
-                        $("#table2 .row:last").append($('<div class="cell"><button onclick="showMasteries(this)"><img tag="masteries" alt="masteries" src="' + data.participants[i].keyStone + '"/></button></div>'));
-                        $("#table2 .row:last").append($('<div class="cell"><button onclick="showRunes(this)"><img tag="runes" alt="runes" src="css/Rune.png"/></button></div>'));
-                    }
-                }
-
-                $(".menuButtonContainer").show();
+function updateUI() {
+    //"https://localhost:8000/Test"
+    //"https://leaguetwitch.herokuapp.com/Test"
+    $.ajax({
+        url: "https://0c2da9f4.ngrok.io/RetrieveGameData",
+        headers: {
+            'loltwitchextension-jwt': twitchJwt
+        }
+    }).done(function (data) {
+        if (data !== null && data !== "" && data !== "Error") {
+            if ($("#menuContainer").is(":visible")) {
+                $("#menuButtonCollapse").show();
             }
             else {
-                $("#menuContainer").hide();
-                $("#menuButton").hide();
-                $("#menuButtonCollapse").hide();
+                $("#menuButton").show();
             }
-        });
-    }
-}, 3 * 6000);
+
+            $("#table1").html("");
+            $("#table2").html("");
+
+            matchData = data;
+            for (var i = 0; i < data.participants.length; i++) {
+                if (i % 2 === 0) {
+                    $("#table1").append($('<div class="row" id="' + i + '">'));
+                    $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
+                    $("#table1 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));
+                    $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].championImage + '"/></div>'));
+                    $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1.image + '"/></div>'));
+                    $("#table1 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2.image + '"/></div>'));
+                    $("#table1 .row:last").append($('<div class="cell"><button onclick="showMasteries(this)"><img tag="masteries" onerror="defaultImage(this)" src="' + data.participants[i].keyStone + '"/></button></div>'));
+                    $("#table1 .row:last").append($('<div class="cell"><button onclick="showRunes(this)"><img tag="runes" src="css/Rune.png"/></button></div>'));
+                }
+                else {
+                    $("#table2").append($('<div class="row" id="' + i + '">'));
+                    $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].profileIconImage + '" /></div>'));
+                    $("#table2 .row:last").append($('<div class="cell">' + data.participants[i].summonerName + '</div>'));
+                    $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].championImage + '"/></div>'));
+                    $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell1.image + '"/></div>'));
+                    $("#table2 .row:last").append($('<div class="cell"><img src="' + data.participants[i].spell2.image + '"/></div>'));
+                    $("#table2 .row:last").append($('<div class="cell"><button onclick="showMasteries(this)"><img tag="masteries" onerror="defaultImage(this)" src="' + data.participants[i].keyStone + '"/></button></div>'));
+                    $("#table2 .row:last").append($('<div class="cell"><button onclick="showRunes(this)"><img tag="runes" src="css/Rune.png"/></button></div>'));
+                }
+            }
+
+            $(".menuButtonContainer").show();
+        }
+        else {
+            $("#menuContainer").hide();
+            $("#menuButton").hide();
+            $("#menuButtonCollapse").hide();
+        }
+    });
+}

@@ -7,34 +7,39 @@
     <link rel="stylesheet" href="css/config.css">
 </head>
 <body>
+    <div id="successBox"><label>You've successfully set your Summoner Name and Server Location.</label><button onclick="closePopup()">Okay</button></div>
+    <div id="errorBox"><label>An error has occurred! Please check your Summoner Name and Server Location and try again.</label><button onclick="closePopup()">Okay</button></div>
     <div class="menuContainer">
         <div class="login">
-            <label>League of Legends Summoner ID:</label>
-            <br />
-            <br />
-            <input id="summonerName" type="text" />
-            <br />
-            <br />
-            <label>Server Location:</label>
-            <br />
-            <br />
-            <select id="serverLocation">
-                <option></option>
-                <option>BR1</option>
-                <option>EUN1</option>
-                <option>EUW1</option>
-                <option>JP1</option>
-                <option>KR</option>
-                <option>LA1</option>
-                <option>LA2</option>
-                <option>NA1</option>
-                <option>OC1</option>
-                <option>TR1</option>
-                <option>RU</option>
-                <option>PBE1</option>
-            </select>
-            <br />
-            <button id="userSubmit" disabled>Submit</button>
+            <div class="inputContainer">
+                <div class="inputSpacer">
+                    <label>Summoner Name:</label>
+                    <br />
+                    <input id="summonerName" type="text" />
+                </div>
+                <div class="inputSpacer">
+                    <label>Server Location:</label>
+                    <br />
+                    <select id="serverLocation">
+                        <option></option>
+                        <option>BR1</option>
+                        <option>EUN1</option>
+                        <option>EUW1</option>
+                        <option>JP1</option>
+                        <option>KR</option>
+                        <option>LA1</option>
+                        <option>LA2</option>
+                        <option>NA1</option>
+                        <option>OC1</option>
+                        <option>TR1</option>
+                        <option>RU</option>
+                        <option>PBE1</option>
+                    </select>
+                </div>
+            </div>
+            <div class="buttonContainer">
+                <button id="userSubmit" disabled>Submit</button>
+            </div>
         </div>
     </div>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>

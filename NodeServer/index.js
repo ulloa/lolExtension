@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 const twitchSecret = process.env.twitchAPISecret || "FbfkDVjGF6j06gUQcELFv+i4wRujwXhWWw04ojdgknE=";
 const updatePeriod = process.env.MatchUpdatePeriod || 3;
 const locale = "?locale=en_US";
-const key = process.env.riotApiKey || "&api_key=RGAPI-4f2876a1-8695-478f-8998-e7c5fbc1ee72";
+const key = process.env.riotApiKey || "&api_key=RGAPI-d37dee89-2eb2-46b4-9377-19bc3639e364";
 const tagKey = "&tags=keys&dataById=false";
 const tagImage = "&tags=image";
 const riotUrl = ".api.riotgames.com";
@@ -331,7 +331,7 @@ app.get("/SetUser", (req, res) => {
                         if (err) {
                             res.send("Error");
                         }
-                        else {                            
+                        else {
                             res.setHeader("Authorization", jwt.sign(token, twitchSecret));
                             res.send("Success");
                         }
@@ -426,8 +426,8 @@ app.get("/RetrieveGameData", (req, res) => {
                             }
                             else {
                                 _request(`https://${userInfo.ServerLocation + riotUrl}/lol/spectator/v3/active-games/by-summoner/${userInfo.SummonerId + locale + key}`, { json: true }, (err, response, body) => {
-                                    if (!body || err) {
-                                        var userData;
+                                    if (!body || err || body.status !== undefined) {
+                                        var userData = {};
                                         userData.TwitchId = userInfo.TwitchId;
                                         userData.NextUpdate = new Date(new Date().getTime() + updatePeriod * 60000);
                                         userData.MatchData = matchData;

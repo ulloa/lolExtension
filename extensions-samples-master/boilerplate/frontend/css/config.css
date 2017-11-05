@@ -1,40 +1,65 @@
 body {
-    font: 12px arial, sans-serif;
-    min-height: 100%;
+    font: 14px arial, sans-serif;
 }
 
 div {
     margin: 0;
 }
 
-.menuButtonContainer {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    margin-top: -25px;
-}
-
-    .menuButtonContainer img {
-        height: 50px;
-    }
-
 .menuContainer {
-    position: absolute;
-    left: 50%;
-    top: 50%;
     width: 500px;
-    height: 200px;
-    margin: -110px 0 0 -250px;
+    height: auto;
     background: url("BackgroundConfig.png");
     background-size: 100% 100%;
     color: #949790;
 }
 
     .menuContainer .login {
-        margin: auto;
         width: 100%;
-        padding-top: 10%;
-        padding-left: 33%;
+        padding: 5%;
+        overflow: auto;
+    }
+
+        .menuContainer .login .inputContainer {
+            float: left;
+            width: 40%;
+        }
+
+            .menuContainer .login .inputContainer .inputSpacer:not(:last-child) {
+                padding-bottom: 5%;
+            }
+
+            .menuContainer .login .inputContainer .inputSpacer label {
+                padding-bottom: 1%;
+            }
+
+            .menuContainer .login .inputContainer .inputSpacer select,
+            .menuContainer .login .inputContainer .inputSpacer input {
+                width: 90%;
+            }
+
+        .menuContainer .login .buttonContainer {
+            float: left;
+            padding: 5%;
+            padding-left: 15%;
+            width: 30%;
+        }
+
+#successBox, #errorBox {
+    width: 300px;
+    height: auto;
+    background: url("BackgroundConfig.png");
+    background-size: 100% 100%;
+    color: #949790;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    padding: 1%;
+    display: none;
+}
+
+    #successBox button, #errorBox button {
+        margin-top: 3%;
     }
 
 button {
@@ -42,11 +67,20 @@ button {
     border: 3px solid #1c3f42;
     display: inline-block;
     cursor: pointer;
-    padding: 5px;
+    width: 90%;
     color: #949790;
+    padding: 5px;
+    font-size: 15px;
+    font-weight: bold;
 }
 
-    button:hover {
+    button:disabled {
+        cursor: not-allowed;
+        background-color: grey;
+        border: 3px solid lightgrey;
+    }
+
+    button:hover:not(:disabled) {
         background-color: #1d3737;
     }
 
