@@ -4,3 +4,6 @@ I:\SkyDrive\LolTwitchExtension\bin\Microsoft.NodejsTools.WebRole.dll
 I:\SkyDrive\LolTwitchExtension\lolExtension\obj\Debug\TwitchExtension.njsproj.CoreCompileInputs.cache
 I:\SkyDrive\LolTwitchExtension\lolExtension\bin\Microsoft.NodejsTools.WebRole.dll
 I:\SkyDrive\LolTwitchExtension\lolExtension\obj\Debug\TwitchExtension.njsprojResolveAssemblyReference.cache
+C:\Users\Peter\OneDrive\LolTwitchExtension\lolExtension\obj\Debug\TwitchExtension.njsprojResolveAssemblyReference.cache
+C:\Users\Peter\OneDrive\LolTwitchExtension\lolExtension\obj\Debug\TwitchExtension.njsproj.CoreCompileInputs.cache
+C:\Users\Peter\OneDrive\LolTwitchExtension\lolExtension\bin\Microsoft.NodejsTools.WebRole.dll

@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 const twitchSecret = process.env.twitchAPISecret || "FbfkDVjGF6j06gUQcELFv+i4wRujwXhWWw04ojdgknE=";
 const updatePeriod = process.env.MatchUpdatePeriod || 3;
 const locale = "?locale=en_US";
-const key = process.env.riotApiKey || "&api_key=RGAPI-d37dee89-2eb2-46b4-9377-19bc3639e364";
+const key = process.env.riotApiKey || "&api_key=RGAPI-e7f70747-84cf-4d21-9c9e-97864de87518";
 const tagKey = "&tags=keys&dataById=false";
 const tagImage = "&tags=image";
 const riotUrl = ".api.riotgames.com";
